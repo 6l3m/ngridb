@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DbService {
   db: IDBDatabase;
@@ -10,17 +10,19 @@ export class DbService {
     const req = indexedDB.open(name, version);
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = ((evt: any) => {
-        resolve((this.db = evt.target.result));
+        this.db = evt.target.result;
+        resolve(`[NGRIDB] 🙂 ${this.db.name} successfully opened`);
       }).bind(this);
 
       req.onerror = (evt: any) => {
-        reject('openDb: ' + evt.target.error.message);
+        reject('[NGRIDB] 🙁 ' + evt.target.error.message);
       };
 
       req.onupgradeneeded = ((evt: any) => {
-        stores.forEach(store => {
+        stores.forEach((store) => {
           this.createStore(store, 'id', evt);
         });
+        resolve(`[NGRIDB] 👌 ${evt.target.result.name} successfully upgraded`);
       }).bind(this);
     });
   }
@@ -29,7 +31,7 @@ export class DbService {
     const db = evt.target.result as IDBDatabase;
     if (!db.objectStoreNames.contains(storeName)) {
       db.createObjectStore(storeName, {
-        keyPath
+        keyPath,
       });
     }
   }

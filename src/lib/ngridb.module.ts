@@ -1,8 +1,17 @@
-import { NgModule, ModuleWithProviders, APP_INITIALIZER } from '@angular/core';
+import {
+  NgModule,
+  ModuleWithProviders,
+  APP_INITIALIZER,
+  InjectionToken,
+} from '@angular/core';
 
 import { NgridbComponent } from './ngridb.component';
 
 import { DbService } from './db.service';
+
+export const NAME = new InjectionToken<string>('NGRIDB_REGISTER_NAME');
+export const VERSION = new InjectionToken<number>('NGRIDB_REGISTER_VERSION');
+export const STORES = new InjectionToken<string>('NGRIDB_REGISTER_STORES');
 
 export function ngridbAppInitializer(
   name: string,
@@ -10,13 +19,17 @@ export function ngridbAppInitializer(
   stores: string[],
   dbService: DbService
 ) {
-  return (): Promise<any> => dbService.openDb(name, version, stores);
+  return (): Promise<any> =>
+    dbService
+      .openDb(name, version, stores)
+      .then((msg) => console.log(msg))
+      .catch((msg) => console.error(msg));
 }
 
 @NgModule({
   declarations: [NgridbComponent],
   imports: [],
-  exports: [NgridbComponent]
+  exports: [NgridbComponent],
 })
 export class NgridbModule {
   static register(
@@ -27,13 +40,16 @@ export class NgridbModule {
     return {
       ngModule: NgridbModule,
       providers: [
+        { provide: NAME, useValue: name },
+        { provide: VERSION, useValue: version },
+        { provide: STORES, useValue: stores },
         {
           provide: APP_INITIALIZER,
           useFactory: ngridbAppInitializer,
-          deps: [name, version, stores, DbService],
-          multi: true
-        }
-      ]
+          deps: [NAME, VERSION, STORES, DbService],
+          multi: true,
+        },
+      ],
     };
   }
 }
