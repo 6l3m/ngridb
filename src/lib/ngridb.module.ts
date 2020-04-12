@@ -19,11 +19,12 @@ export function ngridbAppInitializer(
   stores: string[],
   dbService: DbService
 ) {
-  return (): Promise<any> =>
+  const initializer = (): Promise<any> =>
     dbService
       .openDb(name, version, stores)
       .then((msg) => console.log(msg))
       .catch((msg) => console.error(msg));
+  return initializer;
 }
 
 @NgModule({
