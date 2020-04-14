@@ -15,23 +15,25 @@ export class DbService {
       }).bind(this);
 
       req.onerror = (evt: any) => {
-        reject('[NGRIDB] 🙁 ' + evt.target.error.message);
+        reject(
+          `[NGRIDB] 🙁 ${evt.target.error.name}: ${evt.target.error.message}`
+        );
       };
 
       req.onupgradeneeded = ((evt: any) => {
         stores.forEach((store) => {
-          this.createStore(store, 'id', evt);
+          this.createStore(store, evt);
         });
         resolve(`[NGRIDB] 👌 ${evt.target.result.name} successfully upgraded`);
       }).bind(this);
     });
   }
 
-  createStore(storeName: string, keyPath: string, evt: any) {
+  createStore(storeName: string, evt: any) {
     const db = evt.target.result as IDBDatabase;
     if (!db.objectStoreNames.contains(storeName)) {
       db.createObjectStore(storeName, {
-        keyPath,
+        autoIncrement: true,
       });
     }
   }
