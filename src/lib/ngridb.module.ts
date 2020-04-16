@@ -22,10 +22,7 @@ export function ngridbAppInitializer(
   const initializer = (): Promise<any> =>
     dbService
       .openDb(name, version, stores)
-      .then((msg) => {
-        console.log(msg);
-        dbService.addDb(['store_test1', 'store_test2'], { a: 1 }, { b: 2 });
-      })
+      .then((msg) => console.log(msg))
       .catch((msg) => console.error(msg));
   return initializer;
 }
