@@ -19,11 +19,14 @@ export function ngridbAppInitializer(
   stores: string[],
   dbService: DbService
 ) {
-  const initializer = (): Promise<any> =>
-    dbService
-      .openDb(name, version, stores)
-      .then((msg) => console.log(msg))
-      .catch((msg) => console.error(msg));
+  const initializer = async () => {
+    try {
+      const msg = await dbService.openDb(name, version, stores);
+      console.log(msg);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return initializer;
 }
 

@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 /**
- * Service handling database operations.
+ * Service handling database operations. Returns Promises.
  */
 export class DbService {
   db: IDBDatabase;
@@ -39,7 +39,9 @@ export class DbService {
             });
           }
         });
-        resolve(`[NGRIDB] 👌 ${evt.target.result.name} successfully upgraded.`);
+        console.log(
+          `[NGRIDB] 👌 ${evt.target.result.name} successfully upgraded.`
+        );
       }).bind(this);
     });
   }
@@ -51,14 +53,17 @@ export class DbService {
    */
   addDb(stores: string[], ...data: any[]): Promise<any> {
     const transaction = this.db.transaction(stores, 'readwrite');
+    let result = [];
     stores.forEach((store: string) => {
       const objectStore = transaction.objectStore(store);
       data.forEach((x: any) => {
-        objectStore.add(x);
+        const request = objectStore.add(x);
+        request.onsuccess = (evt: any) =>
+          (result = [...result, { key: evt.target.result, value: x }]);
       });
     });
     return new Promise<any>((resolve, reject) => {
-      transaction.oncomplete = () => resolve();
+      transaction.oncomplete = () => resolve(result);
       transaction.onerror = (evt: any) =>
         reject(
           `[NGRIDB] 🙁 ${evt.target.error.name}: ${evt.target.error.message}`
