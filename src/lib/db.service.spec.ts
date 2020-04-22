@@ -9,10 +9,9 @@ describe('DbService', () => {
     TestBed.configureTestingModule({});
     service = TestBed.inject(DbService);
     try {
-      const msg = await service.openDb('test', 1, ['test']);
-      expect(msg).toContain('test');
+      await service.openDb('test', 1, ['test']);
     } catch (error) {
-      expect(error).toContain('[NGRIDB]');
+      console.error(error);
     }
   });
 
@@ -32,8 +31,7 @@ describe('DbService', () => {
   });
 
   it('db should exist', () => {
-    console.log('DB name: ' + service.db.name);
-    expect(service.db).toBeTruthy();
+    expect(service.db).toBeDefined();
   });
 
   it('#addDb should return object(s)', async () => {
