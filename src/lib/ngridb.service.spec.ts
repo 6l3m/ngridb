@@ -13,4 +13,8 @@ describe('NgridbService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('#add should add to database and store', () => {
+    // service.add('test', {a: 1});
+  });
 });

@@ -47,7 +47,7 @@ export class DbService {
   }
 
   /**
-   * Write data into one or multiple stores of the database.
+   * Writes data into one or multiple stores of the database.
    * @param stores List of object stores defining the scope of the transaction.
    * @param data Objects to be written in stores (multiple objects accepted).
    */
