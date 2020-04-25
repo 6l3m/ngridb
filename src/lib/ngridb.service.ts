@@ -11,7 +11,7 @@ import { DbService } from './db.service';
 /**
  * Service managing application state depending on database entries.
  */
-export class NgridbService<State = object> {
+export class NgridbService<State> {
   private subject = new BehaviorSubject<any>(null);
   store = this.subject.asObservable().pipe(distinctUntilChanged());
 
@@ -26,7 +26,7 @@ export class NgridbService<State = object> {
    * @param dbStore Object store of database to write into.
    * @param data Data to be written in store.
    */
-  add<a extends keyof State>(dbStore: string, key: a) {
+  add<a extends keyof State>(dbStore: string, key: State[a]): void {
     this.dbService.addDb([dbStore], key).then((res: any[]) => {
       console.log(res);
     });

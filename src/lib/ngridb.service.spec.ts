@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { NgridbService } from './ngridb.service';
 
 describe('NgridbService', () => {
-  let service: NgridbService;
+  let service: NgridbService<{ a: number; b: string }>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
@@ -15,6 +15,6 @@ describe('NgridbService', () => {
   });
 
   it('#add should add to database and store', () => {
-    // service.add('test', {a: 1});
+    service.add('test', '1');
   });
 });
