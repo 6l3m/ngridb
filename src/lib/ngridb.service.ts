@@ -24,11 +24,11 @@ export class NgridbService<State> {
   /**
    * Stores data in database as well as application state.
    * @param dbStore Object store of database to write into.
-   * @param data Data to be written in store.
+   * @param value Value of data to be written in store.
    */
-  add<a extends keyof State>(dbStore: string, key: State[a]): void {
-    this.dbService.addDb([dbStore], key).then((res: any[]) => {
-      console.log(res);
+  add<a extends keyof State>(dbStore: string, value: State[a]) {
+    this.dbService.addDb([dbStore], value).then((res: any[]) => {
+      return res[0];
     });
   }
 }

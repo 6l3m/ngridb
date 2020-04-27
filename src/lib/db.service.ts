@@ -23,15 +23,15 @@ export class DbService {
         this.db = evt.target.result;
         resolve(`[NGRIDB] 🙂 ${this.db.name} successfully opened.`);
       }).bind(this);
-
       req.onerror = (evt: any) => {
         reject(
           `[NGRIDB] 🙁 ${evt.target.error.name}: ${evt.target.error.message}`
         );
       };
-
       req.onupgradeneeded = (evt: any) => {
         const db = evt.target.result as IDBDatabase;
+        // In case of db opened and deleted multiple times to avoid blocking.
+        db.onversionchange = () => db.close();
         stores.forEach((store) => {
           if (!db.objectStoreNames.contains(store)) {
             db.createObjectStore(store, {

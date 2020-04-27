@@ -15,19 +15,23 @@ describe('DbService', () => {
     }
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  afterEach((done: DoneFn) => {
+    const request = indexedDB.deleteDatabase('test');
+    request.onsuccess = () => {
+      console.log('Deleted database successfully');
+      done();
+    };
+    request.onerror = (error) => {
+      console.error('Error deleting DB', error);
+      done();
+    };
+    request.onblocked = (evt: any) => {
+      console.log('Deleting DB blocked');
+    };
   });
 
-  xit('#openDb should return confirmation', async () => {
-    try {
-      const msg = await service.openDb('test', 1, ['test']);
-      console.log(msg);
-      expect(msg).toContain('test');
-    } catch (error) {
-      console.error(error);
-      expect(error).toContain('[NGRIDB]');
-    }
+  it('should be created', () => {
+    expect(service).toBeTruthy();
   });
 
   it('db should exist', () => {
@@ -42,9 +46,5 @@ describe('DbService', () => {
       console.error(error);
       expect(error).toContain('[NGRIDB]');
     }
-  });
-
-  afterAll(() => {
-    indexedDB.deleteDatabase('test');
   });
 });
