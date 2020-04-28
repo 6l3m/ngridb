@@ -21,15 +21,15 @@ describe('NgridbService', () => {
   afterEach((done: DoneFn) => {
     const request = indexedDB.deleteDatabase('test');
     request.onsuccess = () => {
-      console.log('Deleted database successfully');
+      console.log('👍 Deleted database successfully');
       done();
     };
     request.onerror = (error) => {
-      console.error('Error deleting DB', error);
+      console.error('👎 Error deleting DB', error);
       done();
     };
     request.onblocked = (evt: any) => {
-      console.log('Deleting DB blocked');
+      console.log('⛔️ Deleting DB blocked');
     };
   });
 
@@ -41,8 +41,9 @@ describe('NgridbService', () => {
     expect(dbService.db).not.toBeUndefined();
   });
 
-  xit('#add should add to database and store', () => {
-    const res = service.add<'b'>('test', '1');
-    // expect(res).toBe({ key: 1, value: 1 });
+  it('#add should add to database and store', async () => {
+    service.add('b', '1', 'test');
+    // const res = await service.select<string>('b').toPromise();
+    // expect(res).toBe('1');
   });
 });
