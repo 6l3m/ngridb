@@ -26,14 +26,12 @@ export class NgridbService<State> {
    * @param dbStore Object store of database to write into.
    * @param value Value of data to be written in store.
    */
-  add<a extends keyof State>(
+  async add<a extends keyof State>(
     key: a & string,
     value: State[a],
     dbStore?: string
-  ): void {
-    this.dbService.addDb([dbStore || key], value).then((res: any[]) => {
-      this.subject.next({ ...this.subject.value, [key]: res[0].value });
-      console.log(this.subject.value);
-    });
+  ): Promise<void> {
+    const res: any[] = await this.dbService.addDb([dbStore || key], value);
+    this.subject.next({ ...this.subject.value, [key]: res[0].value });
   }
 }

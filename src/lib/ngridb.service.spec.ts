@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { NgridbService } from './ngridb.service';
 import { DbService } from './db.service';
+import { take } from 'rxjs/operators';
 
 describe('NgridbService', () => {
   let service: NgridbService<{ a: number; b: string }>;
@@ -42,8 +43,8 @@ describe('NgridbService', () => {
   });
 
   it('#add should add to database and store', async () => {
-    service.add('b', '1', 'test');
-    // const res = await service.select<string>('b').toPromise();
-    // expect(res).toBe('1');
+    await service.add('b', '1', 'test');
+    const res = await service.select<string>('b').pipe(take(1)).toPromise();
+    expect(res).toBe('1');
   });
 });
