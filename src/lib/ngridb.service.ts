@@ -23,8 +23,10 @@ export class NgridbService<State> {
 
   /**
    * Stores data in database as well as application state.
-   * @param dbStore Object store of database to write into.
+   * @param key Key of application state to hydrate.
    * @param value Value of data to be written in store.
+   * @param dbStore (Optional) Object store of database to write into.
+   * Key will be taken as name of store if null.
    */
   async add<a extends keyof State>(
     key: a & string,
