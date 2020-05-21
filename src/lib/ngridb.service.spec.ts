@@ -29,7 +29,7 @@ describe('NgridbService', () => {
       console.error('👎 Error deleting DB', error);
       done();
     };
-    request.onblocked = (evt: any) => {
+    request.onblocked = () => {
       console.log('⛔️ Deleting DB blocked');
     };
   });

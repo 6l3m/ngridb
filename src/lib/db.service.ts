@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+import { IDBEntry } from './idbEntry.interface';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -53,7 +55,7 @@ export class DbService {
    */
   addDb(stores: string[], ...data: any[]): Promise<any> {
     const transaction = this.db.transaction(stores, 'readwrite');
-    let result = [];
+    let result: IDBEntry[] = [];
     stores.forEach((store: string) => {
       const objectStore = transaction.objectStore(store);
       data.forEach((x: any) => {
