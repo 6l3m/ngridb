@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, pluck, map } from 'rxjs/operators';
 
 import { DbService } from './db.service';
+
 import { IDBEntry } from './idbEntry.interface';
 
 @Injectable({
@@ -23,7 +24,10 @@ export class NgridbService<State> {
    * @param name Name of property to emit. Allows nested properties.
    */
   select<T>(...name: string[]): Observable<T> {
-    return this.store.pipe(pluck(...name), map((res: T) => res.value || ));
+    return this.store.pipe(
+      map((state: State) => Object.keys(state).map((key) => {})),
+      pluck(...name)
+    );
   }
 
   /**
@@ -39,12 +43,17 @@ export class NgridbService<State> {
     dbStore?: string
   ): Promise<void> {
     try {
-      const res: IDBEntry[] = await this.dbService.addDb([dbStore || key], value);
+      const res: IDBEntry[] = await this.dbService.addDb(
+        [dbStore || key],
+        value
+      );
       // DB Stored keys of state object are also stored in application for retrieval.
       this.subject.next({
         ...this.subject.value,
         [key]: this.subject.value[key]
-          ? [...((this.subject.value[key] as unknown) as State[a][]), res[0]]
+          ? Array.isArray(this.subject.value[key])
+            ? [...((this.subject.value[key] as unknown) as State[a][]), res[0]]
+            : [this.subject.value[key], res[0]]
           : res[0],
       });
     } catch (error) {
