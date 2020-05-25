@@ -55,7 +55,7 @@ export class DbService {
    */
   addDb(stores: string[], ...data: any[]): Promise<any> {
     const transaction = this.db.transaction(stores, 'readwrite');
-    let result: IDBEntry[] = [];
+    let result: IDBEntry<any>[] = [];
     stores.forEach((store: string) => {
       const objectStore = transaction.objectStore(store);
       data.forEach((x: any) => {

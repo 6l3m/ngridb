@@ -1,4 +1,4 @@
-export interface IDBEntry {
+export interface IDBEntry<T> {
   key: number;
-  value: unknown;
+  value: T;
 }

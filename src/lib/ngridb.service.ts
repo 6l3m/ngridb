@@ -7,6 +7,10 @@ import { DbService } from './db.service';
 
 import { IDBEntry } from './idbEntry.interface';
 
+type IDBState<State> = {
+  [K in keyof State]: IDBEntry<State[K]>;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -14,7 +18,7 @@ import { IDBEntry } from './idbEntry.interface';
  * Service managing application state depending on database entries.
  */
 export class NgridbService<State> {
-  private subject = new BehaviorSubject<State>({} as State);
+  private subject = new BehaviorSubject<IDBState<State>>({} as IDBState<State>);
   store = this.subject.asObservable().pipe(distinctUntilChanged());
 
   constructor(private dbService: DbService) {}
@@ -25,7 +29,17 @@ export class NgridbService<State> {
    */
   select<T>(...name: string[]): Observable<T> {
     return this.store.pipe(
-      map((state: State) => Object.keys(state).map((key) => {})),
+      map((idbState: IDBState<State>) =>
+        Object.keys(idbState).map((idbKey) =>
+          Array.isArray(idbState[idbKey])
+            ? {
+                [idbKey]: idbState[idbKey].map(
+                  (idbEntry: IDBEntry<any>) => idbEntry.value
+                ),
+              }
+            : { [idbKey]: idbState[idbKey].value }
+        )
+      ),
       pluck(...name)
     );
   }
@@ -43,7 +57,7 @@ export class NgridbService<State> {
     dbStore?: string
   ): Promise<void> {
     try {
-      const res: IDBEntry[] = await this.dbService.addDb(
+      const res: IDBEntry<State[a]>[] = await this.dbService.addDb(
         [dbStore || key],
         value
       );
@@ -52,7 +66,12 @@ export class NgridbService<State> {
         ...this.subject.value,
         [key]: this.subject.value[key]
           ? Array.isArray(this.subject.value[key])
-            ? [...((this.subject.value[key] as unknown) as State[a][]), res[0]]
+            ? [
+                ...((this.subject.value[key] as unknown) as IDBEntry<
+                  State[a]
+                >[]),
+                res[0],
+              ]
             : [this.subject.value[key], res[0]]
           : res[0],
       });
