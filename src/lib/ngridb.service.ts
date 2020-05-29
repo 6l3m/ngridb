@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable } from 'rxjs';
-import { distinctUntilChanged, pluck, map } from 'rxjs/operators';
+import { distinctUntilChanged, pluck, map, tap } from 'rxjs/operators';
 
 import { DbService } from './db.service';
 
@@ -30,14 +30,17 @@ export class NgridbService<State> {
   select<T>(...name: string[]): Observable<T> {
     return this.store.pipe(
       map((idbState: IDBState<State>) =>
-        Object.keys(idbState).map((idbKey) =>
-          Array.isArray(idbState[idbKey])
-            ? {
-                [idbKey]: idbState[idbKey].map(
-                  (idbEntry: IDBEntry<any>) => idbEntry.value
-                ),
-              }
-            : { [idbKey]: idbState[idbKey].value }
+        Object.keys(idbState).reduce(
+          (acc, curr) =>
+            Array.isArray(idbState[curr])
+              ? {
+                  ...acc,
+                  [curr]: idbState[curr].map(
+                    (idbEntry: IDBEntry<any>) => idbEntry.value
+                  ),
+                }
+              : { ...acc, [curr]: idbState[curr].value },
+          {}
         )
       ),
       pluck(...name)
