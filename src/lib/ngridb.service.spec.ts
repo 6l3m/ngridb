@@ -46,7 +46,9 @@ describe('NgridbService', () => {
     await service.add('b', '1', 'test');
     await service.add('a', 1, 'test');
     await service.add('a', 2, 'test');
-    const res = await service.select<number[]>('a').pipe(take(1)).toPromise();
-    expect(res).toEqual([1, 2]);
+    const res1 = await service.select<number[]>('a').pipe(take(1)).toPromise();
+    expect(res1).toEqual([1, 2]);
+    const res2 = await service.select<string>('b').pipe(take(1)).toPromise();
+    expect(res2).toBe('1');
   });
 });

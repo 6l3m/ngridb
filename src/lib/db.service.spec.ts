@@ -47,4 +47,13 @@ describe('DbService', () => {
       expect(error).toContain('[NGRIDB]');
     }
   });
+
+  it('#deleteDb should delete object', async () => {
+    try {
+      const result = await service.addDb(['test'], { a: 1 });
+      expect(result).toEqual([{ key: 1, value: { a: 1 } }]);
+    } catch (error) {
+      console.error(error);
+    }
+  })
 });
