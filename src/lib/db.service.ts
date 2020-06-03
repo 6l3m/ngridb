@@ -78,7 +78,7 @@ export class DbService {
    * @param stores List of object stores defining the scope of the transaction.
    * @param keys Keys of objects to be removed from database.
    */
-  deleteDb(stores: string[], ...keys: any[]): Promise<any> {
+  deleteDb(stores: string[], ...keys: number[]): Promise<any> {
     const transaction = this.db.transaction(stores, 'readwrite');
     stores.forEach((store: string) => {
       const objectStore = transaction.objectStore(store);
@@ -88,6 +88,24 @@ export class DbService {
     });
     return new Promise<any>((resolve, reject) => {
       transaction.oncomplete = () => resolve();
+      transaction.onerror = (evt: any) =>
+        reject(
+          `[NGRIDB] 🙁 ${evt.target.error.name}: ${evt.target.error.message}`
+        );
+    });
+  }
+
+  getDb(stores: string[], key: number) {
+    const transaction = this.db.transaction(stores, 'readonly');
+    let result: IDBEntry<any>[] = [];
+    stores.forEach((store: string) => {
+      const objectStore = transaction.objectStore(store);
+      const request = objectStore.get(key);
+      request.onsuccess = (evt: any) =>
+        (result = [...result, evt.target.result]);
+    });
+    return new Promise<any>((resolve, reject) => {
+      transaction.oncomplete = () => resolve(result);
       transaction.onerror = (evt: any) =>
         reject(
           `[NGRIDB] 🙁 ${evt.target.error.name}: ${evt.target.error.message}`

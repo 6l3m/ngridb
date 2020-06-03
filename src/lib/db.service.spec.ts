@@ -48,12 +48,14 @@ describe('DbService', () => {
     }
   });
 
-  it('#deleteDb should delete object', async () => {
+  it('#getDb should retrieve object', async () => {
+    await service.addDb(['test'], { a: 1 });
     try {
-      const result = await service.addDb(['test'], { a: 1 });
-      expect(result).toEqual([{ key: 1, value: { a: 1 } }]);
+      const result = await service.getDb(['test'], 1);
+      expect(result).toEqual([{ a: 1 }]);
     } catch (error) {
       console.error(error);
+      expect(error).toContain('[NGRIDB]');
     }
-  })
+  });
 });
