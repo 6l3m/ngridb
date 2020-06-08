@@ -23,6 +23,10 @@ export class DbService {
       req.onsuccess = ((evt: any) => {
         // request is the target of the DOM event
         this.db = evt.target.result;
+        this.db.onabort = () => console.log('****************');
+        this.db.onclose = () => console.log('****************');
+        this.db.onerror = () => console.log('****************');
+        console.log(evt);
         resolve(`[NGRIDB] 🙂 ${this.db.name} successfully opened.`);
       }).bind(this);
       req.onerror = (evt: any) => {
