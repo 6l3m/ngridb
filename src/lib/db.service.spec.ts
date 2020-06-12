@@ -52,7 +52,7 @@ describe('DbService', () => {
   it('#getDb should retrieve object', async () => {
     await service.addDb(['test'], { a: 1 });
     try {
-      const result = await service.getDb(['test1'], 1);
+      const result = await service.getDb(['test'], 1);
       expect(result).toEqual([{ a: 1 }]);
     } catch (error) {
       console.error(error);

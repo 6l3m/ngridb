@@ -23,10 +23,6 @@ export class DbService {
       req.onsuccess = ((evt: any) => {
         // request is the target of the DOM event
         this.db = evt.target.result;
-        this.db.onabort = () => console.log('****************');
-        this.db.onclose = () => console.log('****************');
-        this.db.onerror = () => console.log('****************');
-        console.log(evt);
         resolve(`[NGRIDB] 🙂 ${this.db.name} successfully opened.`);
       }).bind(this);
       req.onerror = (evt: any) => {
@@ -99,21 +95,27 @@ export class DbService {
     });
   }
 
-  getDb(stores: string[], key: number) {
-    const transaction = this.db.transaction(stores, 'readonly');
-    let result: IDBEntry<any>[] = [];
-    stores.forEach((store: string) => {
-      const objectStore = transaction.objectStore(store);
-      const request = objectStore.get(key);
-      request.onsuccess = (evt: any) =>
-        (result = [...result, evt.target.result]);
-    });
-    return new Promise<any>((resolve, reject) => {
-      transaction.oncomplete = () => resolve(result);
-      transaction.onerror = (evt: any) =>
-        reject(
-          `[NGRIDB] 🙁 ${evt.target.error.name}: ${evt.target.error.message}`
-        );
-    });
+  getDb(stores: string[], key: number): Promise<any[] | string> {
+    try {
+      const transaction = this.db.transaction(stores, 'readonly');
+      let result: any[] = [];
+      stores.forEach((store: string) => {
+        const objectStore = transaction.objectStore(store);
+        const request = objectStore.get(key);
+        request.onsuccess = (evt: any) =>
+          (result = [...result, evt.target.result]);
+      });
+      return new Promise<IDBEntry<any>[]>((resolve, reject) => {
+        transaction.oncomplete = () => resolve(result);
+        transaction.onerror = (evt: any) =>
+          reject(
+            `[NGRIDB] 🙁 ${evt.target.error.name}: ${evt.target.error.message}`
+          );
+      });
+    } catch (error) {
+      return new Promise<string>((resolve, reject) =>
+        reject(`[NGRIDB] 🙁 ${error.name}: ${error.message}`)
+      );
+    }
   }
 }
