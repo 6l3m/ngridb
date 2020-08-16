@@ -8,10 +8,11 @@ import {
 import { NgridbComponent } from './ngridb.component';
 
 import { DbService } from './db.service';
+import { Statement } from '@angular/compiler';
 
-export const NAME = new InjectionToken<string>('NGRIDB_REGISTER_NAME');
-export const VERSION = new InjectionToken<number>('NGRIDB_REGISTER_VERSION');
-export const STORES = new InjectionToken<string>('NGRIDB_REGISTER_STORES');
+const NAME = new InjectionToken<string>('NGRIDB_REGISTER_NAME');
+const VERSION = new InjectionToken<number>('NGRIDB_REGISTER_VERSION');
+const STORES = new InjectionToken<number>('NGRIDB_REGISTER_STORES');
 
 export function ngridbAppInitializer(
   name: string,
@@ -36,17 +37,20 @@ export function ngridbAppInitializer(
   exports: [NgridbComponent],
 })
 export class NgridbModule {
-  static register(
+  static register<State>(
     name: string,
-    version: number,
-    stores: string[]
+    version: number
   ): ModuleWithProviders<NgridbModule> {
+    // console.log(State);
     return {
       ngModule: NgridbModule,
       providers: [
         { provide: NAME, useValue: name },
         { provide: VERSION, useValue: version },
-        { provide: STORES, useValue: stores },
+        {
+          provide: STORES,
+          useValue: Object.keys('state'),
+        },
         {
           provide: APP_INITIALIZER,
           useFactory: ngridbAppInitializer,

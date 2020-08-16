@@ -41,8 +41,8 @@ describe('DbService', () => {
 
   it('#addDb should return object(s)', async () => {
     try {
-      const result = await service.addDb(['test'], { a: 1 });
-      expect(result).toEqual([{ key: 1, value: { a: 1 } }]);
+      const result = await service.addDb(['test'], [{ a: 1 }, { a: 2 }]);
+      expect(result).toEqual([{ key: 1, value: [{ a: 1 }, { a: 2 }] }]);
     } catch (error) {
       console.error(error);
       expect(error).toContain('[NGRIDB]');

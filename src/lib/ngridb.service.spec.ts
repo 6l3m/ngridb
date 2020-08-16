@@ -1,22 +1,23 @@
 import { TestBed } from '@angular/core/testing';
 
-import { NgridbService } from './ngridb.service';
-import { DbService } from './db.service';
 import { take } from 'rxjs/operators';
 
+import { NgridbService } from './ngridb.service';
+
+import { NgridbModule } from './ngridb.module';
+
+interface State {
+  a: number;
+  b: string;
+}
+
 describe('NgridbService', () => {
-  let service: NgridbService<{ a: number; b: string }>;
-  let dbService: DbService;
+  let service: NgridbService<State>;
 
   beforeEach(async () => {
     TestBed.configureTestingModule({});
+    NgridbModule.register<State>('db-test', 1);
     service = TestBed.inject(NgridbService);
-    dbService = TestBed.inject(DbService);
-    try {
-      await dbService.openDb('test', 1, ['test']);
-    } catch (error) {
-      console.error(error);
-    }
   });
 
   afterEach((done: DoneFn) => {
@@ -38,14 +39,10 @@ describe('NgridbService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('db should not be undefined', () => {
-    expect(dbService.db).not.toBeUndefined();
-  });
-
   it('#add should add to database and store', async () => {
-    await service.add('b', '1', 'test');
-    await service.add('a', 1, 'test');
-    await service.add('a', 2, 'test');
+    await service.add('b', '1');
+    await service.add('a', 1);
+    await service.add('a', 2);
     const res1 = await service.select<number[]>('a').pipe(take(1)).toPromise();
     expect(res1).toEqual([1, 2]);
     const res2 = await service.select<string>('b').pipe(take(1)).toPromise();
