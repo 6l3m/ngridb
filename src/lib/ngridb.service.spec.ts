@@ -16,7 +16,7 @@ describe('NgridbService', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({});
-    NgridbModule.register<State>('db-test', 1);
+    NgridbModule.register<State>('db-test', 1, ['a', 'b']);
     service = TestBed.inject(NgridbService);
   });
 

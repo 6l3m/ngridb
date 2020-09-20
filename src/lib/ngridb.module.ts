@@ -39,9 +39,9 @@ export function ngridbAppInitializer(
 export class NgridbModule {
   static register<State>(
     name: string,
-    version: number
+    version: number,
+    keys: (keyof State)[]
   ): ModuleWithProviders<NgridbModule> {
-    // console.log(State);
     return {
       ngModule: NgridbModule,
       providers: [
@@ -49,7 +49,7 @@ export class NgridbModule {
         { provide: VERSION, useValue: version },
         {
           provide: STORES,
-          useValue: Object.keys('state'),
+          useValue: keys,
         },
         {
           provide: APP_INITIALIZER,
